@@ -1,0 +1,40 @@
+POST http://localhost:3003/api/users
+Content-Type: application/json
+
+{
+"username": "whss",
+"name" : "hi",
+"password": "world"
+}
+
+
+###
+
+POST http://localhost:3003/api/login
+Content-Type: application/json
+
+{
+"username": "whss",
+"password": "world"
+}
+
+###
+
+GET http://localhost:3003/api/users
+
+###
+
+GET http://localhost:3003/api/blogs
+
+###
+
+POST  http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+    "title": "eeg3",
+    "author": "hello4",
+    "url": "noo",
+    "likes": "9",
+    "userId": "6641d721f49feaedfa71df22"
+}
