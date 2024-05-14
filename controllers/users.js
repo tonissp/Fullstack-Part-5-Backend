@@ -37,15 +37,12 @@ usersRouter.post('/', async (request, response) => {
 
 usersRouter.get('/', async (request, response) => {
     try {
-        const users = await User.find({}).populate({
-            path: 'blogs',
-            select: 'title author url',
-        });
-        response.json(users);
+        const users = await User.find({}).populate('blogs')
+        response.json(users)
     } catch (error) {
-        console.error('Error fetching users:', error);
-        response.status(500).json({ error: 'Internal Server Error' });
+        console.error('Error fetching users:', error)
+        response.status(500).json({ error: 'Internal Server Error' })
     }
-});
+})
 
 module.exports = usersRouter

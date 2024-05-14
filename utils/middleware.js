@@ -1,3 +1,4 @@
+const { usersInDb } = require('../tests/test_helper')
 const logger = require('./logger')
 
 const requestLogger = (request, response, next) => {
@@ -24,8 +25,20 @@ const errorHandler = (error, request, response, next) => {
   next(error)
 }
 
+const tokenExtractor = (request, response, next) => {
+  try {
+    const authorization = request.get('Authorization')
+    const token = authorization && authorization.startsWith('Bearer ') ? authorization.replace('Bearer ', '') : null
+    request.token = token
+    next();
+  } catch (error) {
+    next(error)
+  }
+}
+
 module.exports = {
   requestLogger,
   unknownEndpoint,
-  errorHandler
+  errorHandler,
+  tokenExtractor
 }

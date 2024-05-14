@@ -76,15 +76,15 @@ describe('adding blogs to database', () => {
     const response = await api
       .post('/api/blogs')
       .set('Authorization', `Bearer ${token}`)
-      .send(newBlog);
+      .send(newBlog)
     
     assert.strictEqual(response.status, 201)
 
     const blogsAtEnd = await helper.blogsInDb()
-    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length + 1);
+    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length + 1)
 
-    const likes = blogsAtEnd.map(n => n.likes)
-    assert(likes.includes(0));
+    const lastBlog = blogsAtEnd[blogsAtEnd.length - 1]
+    assert.strictEqual(lastBlog.likes, 0)
   })
 
   test('new blog without title property will not be added', async () => {
@@ -97,7 +97,7 @@ describe('adding blogs to database', () => {
     const response = await api
       .post('/api/blogs')
       .set('Authorization', `Bearer ${token}`)
-      .send(newBlog);
+      .send(newBlog)
     
     assert.strictEqual(response.status, 400)
 
@@ -119,7 +119,7 @@ describe('adding blogs to database', () => {
     
     assert.strictEqual(response.status, 400)
 
-    const blogsAtEnd = await helper.blogsInDb();
+    const blogsAtEnd = await helper.blogsInDb()
     assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
   })
 
@@ -142,47 +142,44 @@ describe('adding blogs to database', () => {
 
 describe('handling existing blogposts', () => {
   test('a blog can be deleted', async () => {
-    // Create a new user
     const newUser = {
       username: 'testuser',
       password: 'testpassword',
-    };
-    await api.post('/api/users').send(newUser);
+    }
+    await api.post('/api/users').send(newUser)
   
-    // Login to get the token
     const loginResponse = await api.post('/api/login').send({
       username: newUser.username,
       password: newUser.password,
-    });
-    const token = loginResponse.body.token;
+    })
+    const token = loginResponse.body.token
   
-    // Add a new blog
     const newBlog = {
       title: 'Test Blog',
       author: 'Test Author',
       url: 'http://testurl.com',
       likes: 5,
-    };
+    }
     const addBlogResponse = await api
       .post('/api/blogs')
       .set('Authorization', `Bearer ${token}`)
-      .send(newBlog);
-    const addedBlogId = addBlogResponse.body.id;
-  
-    // Delete the added blog
+      .send(newBlog)
+    const addedBlogId = addBlogResponse.body.id
+
+    const blogAdded = await helper.blogsInDb()
+    assert.strictEqual(blogAdded.length, helper.initialBlogs.length+1)
+
     const deleteResponse = await api
       .delete(`/api/blogs/${addedBlogId}`)
-      .set('Authorization', `Bearer ${token}`);
+      .set('Authorization', `Bearer ${token}`)
   
-    // Check response status
-    assert.strictEqual(deleteResponse.status, 204);
+    assert.strictEqual(deleteResponse.status, 204)
   
-    // Check that the deleted blog is no longer in the database
-    const blogsAtEnd = await helper.blogsInDb();
-    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length);
-    const titles = blogsAtEnd.map((blog) => blog.title);
-    assert.ok(!titles.includes(newBlog.title));
-  });
+    const blogsAtEnd = await helper.blogsInDb()
+    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
+    const titles = blogsAtEnd.map((blog) => blog.title)
+    assert.ok(!titles.includes(newBlog.title))
+  })
 
   test('the information of an existing blog post is updated', async () => {
     const blogsAtStart = await helper.blogsInDb()
@@ -205,8 +202,7 @@ describe('handling existing blogposts', () => {
     const blogsAtEnd = await helper.blogsInDb()
     
     assert.strictEqual(
-      blogsAtEnd.length,
-      helper.initialBlogs.length
+      blogsAtEnd.length, helper.initialBlogs.length
     )
 
     const beforeLikes = blogsAtStart.map(n => n.likes)
@@ -214,8 +210,11 @@ describe('handling existing blogposts', () => {
     const afterLikes = blogsAtEnd.map(n => n.likes)
     
     assert.deepStrictEqual(
-      afterLikes.includes(beforeLikes),
-      false
+      afterLikes.includes(beforeLikes), false
+    )
+
+    assert.deepStrictEqual(
+      afterLikes[0], 42069
     )
   })
 })
@@ -320,7 +319,7 @@ describe('when there is initially one user in db', () => {
     const usersAtStart = await helper.usersInDb()
 
     const newUser = {
-        username: 'he',
+        username: 'ye',
         name: 'yep',
         password: 'yes',
     }
