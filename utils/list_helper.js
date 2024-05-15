@@ -1,76 +1,67 @@
-const _ = require("lodash")
-
 const dummy = (blogs) => {
-    return 1
+	return 1
   }
-
-const totalLikes = (blogs) => {
-	const blogsLikes = blogs.map(blogs => blogs.likes)
-
-    const likes = blogsLikes.reduce((previousValue, currentValue) => previousValue + currentValue, 0)
   
-	return likes
-}
-
-const favoriteBlog = (blogs) => {
-	const blogsLikes = blogs.map(blogs => blogs.likes)
-	const largestIndex = blogsLikes.indexOf(Math.max(...blogsLikes))
-	const largestBlog = blogs[largestIndex]
-
-	return {
-		title: largestBlog.title,
-		author: largestBlog.author,
-		likes: largestBlog.likes,
-	}
-}
-
-const mostBlogs = (blogs) => {
-	const blogsAuthor = blogs.map(blogs => blogs.author)
-	
-    blogsAuthor.sort((a, b) => a - b); 
-    let count = 1, 
-        max = 0, 
-        el; 
-      
-    for (let i = 1; i < blogsAuthor.length; ++i) { 
-        if (blogsAuthor[i] === blogsAuthor[i - 1]) { 
-            count++; 
-        } else { 
-            count = 1; 
-        } 
-        if (count > max) { 
-            max = count; 
-            el = blogsAuthor[i]; 
-        } 
-    } 
-	
-	return {
-		author: el,
-		blogs: count,
-	}
-}
-
-const mostLikes = (blogs) => {
-	const groupedBlogs = _.groupBy(blogs, 'author')
-	const authorLikes = _.map(groupedBlogs, (arr) => { 
-		return { 
-			author: arr[0].author, 
-			likes: _.sumBy(arr, 'likes'), 
-		}; 
-		
-	})
-	const maxLikesAuthor = _.maxBy(authorLikes, (a) => a.likes)
-
-	return {
-		author: maxLikesAuthor.author,
-		likes: maxLikesAuthor.likes
-	}
-}
+  const totalLikes = (blogs) => {
+	return blogs.reduce((sum, blog) => sum + blog.likes, 0)
+  }
   
-module.exports = {
-    dummy,
-    totalLikes,
-    favoriteBlog,
-    mostBlogs,
-    mostLikes
+  const favoriteBlog = (blogs) => {
+	return blogs.reduce((max, blog) => max.likes > blog.likes ? max : blog, {});
+  }
+  
+  const mostBlogs = (blogs) => {
+	if (!blogs.length) {
+	  return null
+	}
+  
+	const authors = blogs.reduce((acc, blog) => {
+	  acc[blog.author] = (acc[blog.author] || 0) + 1
+	  return acc;
+	}, {});
+  
+	let maxAuthor = Object.keys(authors)[0]
+  
+	for (const author in authors) {
+	  if (authors[author] > authors[maxAuthor]) {
+		maxAuthor = author
+	  }
+	}
+  
+	return {
+	  author: maxAuthor,
+	  blogs: authors[maxAuthor]
+	}
+  }
+  
+  const mostLikes = (blogs) => {
+	if (!blogs.length) {
+	  return null
+	}
+  
+	const authors = blogs.reduce((acc, blog) => {
+	  acc[blog.author] = (acc[blog.author] || 0) + blog.likes
+	  return acc;
+	}, {});
+  
+	let maxAuthor = Object.keys(authors)[0]
+  
+	for (const author in authors) {
+	  if (authors[author] > authors[maxAuthor]) {
+		maxAuthor = author
+	  }
+	}
+  
+	return {
+	  author: maxAuthor,
+	  likes: authors[maxAuthor]
+	}
+  }
+  
+  module.exports = {
+	dummy,
+	totalLikes,
+	favoriteBlog,
+	mostBlogs,
+	mostLikes
   }

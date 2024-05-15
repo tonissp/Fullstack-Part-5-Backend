@@ -2,7 +2,7 @@ POST http://localhost:3003/api/users
 Content-Type: application/json
 
 {
-"username": "whss",
+"username": "hello2",
 "name" : "hi",
 "password": "world"
 }
@@ -14,7 +14,7 @@ POST http://localhost:3003/api/login
 Content-Type: application/json
 
 {
-"username": "whss",
+"username": "hello",
 "password": "world"
 }
 
